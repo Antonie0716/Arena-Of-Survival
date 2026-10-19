@@ -116,9 +116,16 @@ public static class ArenaBuilder
     static void EnsureFolders()
     {
         string[] folders = { "Sprites", "Prefabs", "Scenes", "Materials", "Audio" };
-        foreach (string f in folders)
+
+        for (int i = 0; i < folders.Length; i++)
+        {
+            string f = folders[i];
+
             if (!AssetDatabase.IsValidFolder("Assets/" + f))
+            {
                 AssetDatabase.CreateFolder("Assets", f);
+            }
+        }
     }
 
     static PhysicsMaterial2D CreatePhysicsMaterial()
@@ -163,7 +170,17 @@ public static class ArenaBuilder
 
         public bool Inside(int x, int y) { return x >= 0 && y >= 0 && x < W && y < H; }
         public void Set(int x, int y, Color32 c) { if (Inside(x, y)) px[y * W + x] = c; }
-        public Color32 Get(int x, int y) { return Inside(x, y) ? px[y * W + x] : new Color32(0, 0, 0, 0); }
+        public Color32 Get(int x, int y)
+        {
+            if (Inside(x, y))
+            {
+                return px[y * W + x];
+            }
+            else
+            {
+                return new Color32(0, 0, 0, 0);
+            }
+        }
 
         public void Rect(int x, int y, int w, int h, Color32 c)
         {
@@ -548,7 +565,10 @@ public static class ArenaBuilder
         {
             cv.Rect(2, 0, 28, 14, wood);
             int[] planks = { 5, 9, 13, 19, 23, 27 };
-            foreach (int px in planks) cv.Rect(px, 0, 1, 14, woodDark);
+            for (int i = 0; i < planks.Length; i++)
+            {
+                cv.Rect(planks[i], 0, 1, 14, woodDark);
+            }
             cv.Rect(15, 0, 2, 14, woodDark);
             cv.Rect(2, 3, 28, 2, iron);
             cv.Rect(2, 10, 28, 2, iron);
@@ -958,13 +978,20 @@ public static class ArenaBuilder
         Vector2[] bushes = { new Vector2(-13.3f, 6.3f), new Vector2(13.3f, 6.3f), new Vector2(-13.4f, -6.5f),
                              new Vector2(6.5f, -6.4f), new Vector2(-6.5f, 6.4f), new Vector2(9.2f, 6.4f),
                              new Vector2(-2.8f, 6.5f), new Vector2(3.0f, 6.5f) };
-        foreach (Vector2 b in bushes) Decor(parent, art.bush, b, 1f, b.x > 0f);
+        for (int i = 0; i < bushes.Length; i++)
+        {
+            Vector2 b = bushes[i];
+            Decor(parent, art.bush, b, 1f, b.x > 0f);
+        }
 
         Vector2[] grass = { new Vector2(-8f, -6.4f), new Vector2(1.5f, -6.6f), new Vector2(10f, -5.8f),
                             new Vector2(-11f, 0.5f), new Vector2(6.2f, 5.8f), new Vector2(-6.8f, -0.8f),
                             new Vector2(12.8f, 3.4f), new Vector2(-1.8f, 2.6f), new Vector2(8.6f, -4.2f),
                             new Vector2(-9.4f, 5.6f) };
-        foreach (Vector2 g in grass) Decor(parent, art.grass, g);
+        for (int i = 0; i < grass.Length; i++)
+        {
+            Decor(parent, art.grass, grass[i]);
+        }
 
         Decor(parent, art.skull, new Vector2(-6.5f, -5.5f));
         Decor(parent, art.skull, new Vector2(8.2f, 4.8f), 1f, true);
@@ -1027,13 +1054,22 @@ public static class ArenaBuilder
         Transform obstacles = new GameObject("Obstaculos").transform;
         obstacles.SetParent(env, false);
         Vector2[] pillars = { new Vector2(-4.5f, -0.5f), new Vector2(4.5f, -0.5f), new Vector2(-11.5f, 4.5f), new Vector2(11.5f, 4.5f) };
-        foreach (Vector2 v in pillars) Place(prefabs.pillar, v, obstacles, "Pilar");
+        for (int i = 0; i < pillars.Length; i++)
+        {
+            Place(prefabs.pillar, pillars[i], obstacles, "Pilar");
+        }
         Vector2[] crates = { new Vector2(-12.5f, -5.5f), new Vector2(-11.5f, -5.5f), new Vector2(-12.5f, -4.5f),
                              new Vector2(12.5f, -5.5f), new Vector2(12.5f, 0.5f), new Vector2(11.5f, 0.5f) };
-        foreach (Vector2 v in crates) Place(prefabs.crate, v, obstacles, "Caixa");
+        for (int i = 0; i < crates.Length; i++)
+        {
+            Place(prefabs.crate, crates[i], obstacles, "Caixa");
+        }
         Vector2[] rocks = { new Vector2(-7.5f, 1.5f), new Vector2(7.5f, 1.5f), new Vector2(3.5f, -4.5f),
                             new Vector2(-3.5f, -4.5f), new Vector2(-12.5f, 2.5f), new Vector2(12.5f, -2.5f) };
-        foreach (Vector2 v in rocks) Place(prefabs.rock, v, obstacles, "Pedra");
+        for (int i = 0; i < rocks.Length; i++)
+        {
+            Place(prefabs.rock, rocks[i], obstacles, "Pedra");
+        }
 
         Transform decor = new GameObject("Decoracao").transform;
         decor.SetParent(env, false);
@@ -1076,11 +1112,24 @@ public static class ArenaBuilder
     {
         if (cachedFont != null) return cachedFont;
         string[] names = { "LegacyRuntime.ttf", "Arial.ttf" };
-        foreach (string n in names)
+
+        for (int i = 0; i < names.Length; i++)
         {
-            try { cachedFont = Resources.GetBuiltinResource<Font>(n); }
-            catch (System.Exception) { cachedFont = null; }
-            if (cachedFont != null) break;
+            string n = names[i];
+
+            try
+            {
+                cachedFont = Resources.GetBuiltinResource<Font>(n);
+            }
+            catch (System.Exception)
+            {
+                cachedFont = null;
+            }
+
+            if (cachedFont != null)
+            {
+                break;
+            }
         }
         return cachedFont;
     }

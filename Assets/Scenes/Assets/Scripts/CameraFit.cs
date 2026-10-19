@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Câmera fixa: ajusta o tamanho ortográfico para que a arena inteira
-/// (32 x 18 unidades, incluindo a faixa do HUD) caiba em qualquer proporção de tela.
+/// Ajusta a câmera para que toda a arena
+/// caiba corretamente na tela.
 /// </summary>
 [RequireComponent(typeof(Camera))]
 public class CameraFit : MonoBehaviour
@@ -15,7 +15,9 @@ public class CameraFit : MonoBehaviour
     void Awake()
     {
         cam = GetComponent<Camera>();
+
         cam.orthographic = true;
+
         Apply();
     }
 
@@ -24,11 +26,43 @@ public class CameraFit : MonoBehaviour
         Apply();
     }
 
+    /// <summary>
+    /// Calcula e aplica o tamanho correto da câmera.
+    /// </summary>
     void Apply()
     {
-        float aspect = Mathf.Max(0.1f, cam.aspect);
+        float aspect = cam.aspect;
+
+        // Evita que o valor da proporção fique muito pequeno.
+        if (aspect < 0.1f)
+        {
+            aspect = 0.1f;
+        }
+
         float sizeByHeight = targetHeight * 0.5f;
-        float sizeByWidth = targetWidth * 0.5f / aspect;
-        cam.orthographicSize = Mathf.Max(sizeByHeight, sizeByWidth);
+
+        float sizeByWidth =
+            targetWidth * 0.5f / aspect;
+
+        // Usa uma função para descobrir qual tamanho é maior.
+        float cameraSize =
+            GetLargerValue(sizeByHeight, sizeByWidth);
+
+        cam.orthographicSize = cameraSize;
+    }
+
+    /// <summary>
+    /// Recebe dois valores e retorna o maior.
+    /// </summary>
+    float GetLargerValue(float value1, float value2)
+    {
+        if (value1 > value2)
+        {
+            return value1;
+        }
+        else
+        {
+            return value2;
+        }
     }
 }
